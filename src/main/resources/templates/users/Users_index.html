@@ -9,7 +9,7 @@
 <body>
     <div class="container my-4">
         <h1 class="text-center mb-3">Clients List</h1>
-        <a href="/clients/create" class="btn btn-primary">Add New Client</a>
+        <a href="/users/create" class="btn btn-primary">Add New Client</a>
         <table class="table">
             <thead>
                 <tr>
@@ -25,19 +25,19 @@
                 </tr>
             </thead>
             <tbody class="table-divider">
-                <tr th:each="client : ${clients}">
-                    <td th:text="${client.id}"></td>
-                    <td th:text="@{${client.firstName}+' '+${client.lastName}}"></td>
-                    <td th:text="${client.email}"></td>
-                    <td th:text="${client.password}"></td>
-                    <td th:text="${client.phone}"></td>
-                    <td th:text="${client.address}"></td>
-                    <td th:text="${client.status}"></td>
-                    <td th:text="${client.createdAt.toString().substring(0,10)}"></td>
+                <tr th:each="user : ${users}">
+                    <td th:text="${user.id}"></td>
+                    <td th:text="@{${user.firstName}+' '+${user.lastName}}"></td>
+                    <td th:text="${user.email}"></td>
+                    <td th:text="${user.password}"></td>
+                    <td th:text="${user.phone}"></td>
+                    <td th:text="${user.address}"></td>
+                    <td th:text="${user.status}"></td>
+                    <td th:text="${user.createdAt.toString().substring(0,10)}"></td>
     
                     <td style="white-Space: nowrap;">
-                        <a th:href="@{'/clients/edit/' + ${client.id}}" class="btn btn-primary">Edit</a>
-                        <a th:href="@{'/clients/delete/' + ${client.id}}" class="btn btn-danger" onclick="return confirm('Are you Sure?')">Delete</a>
+                        <a th:href="@{'/users/edit/' + ${user.id}}" class="btn btn-primary">Edit</a>
+                        <a th:href="@{'/users/delete/' + ${user.id}}" class="btn btn-danger" onclick="return confirm('Are you Sure?')">Delete</a>
                 </tr>
             </tbody>
         </table>

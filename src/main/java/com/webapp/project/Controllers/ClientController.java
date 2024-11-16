@@ -2,7 +2,6 @@ package com.webapp.project.Controllers;
 
 import java.util.Date;
 import org.springframework.beans.factory.annotation.Autowired;
-import com.webapp.project.models.Clients;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -12,123 +11,126 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import com.webapp.project.models.ClientDto;
-import com.webapp.project.models.repositories.ClientRepository;
+import com.webapp.project.models.UserDto;
+import com.webapp.project.models.UsersTable;
+import com.webapp.project.models.repositories.UserRepository;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.PostMapping;
 
 
 @Controller
-@RequestMapping("/clients")
+@RequestMapping("/users")
 public class ClientController {
     @Autowired
-    private ClientRepository clientRepo;
+    private UserRepository userRepo;
 
 
     @GetMapping({"", "/"})
     public String getClients(Model model) {
-        var clients = clientRepo.findAll(Sort.by(Sort.Direction.DESC, "Id"));
-        model.addAttribute("clients", clients);
-        return "clients/Clients_index";
+        var users = userRepo.findAll(Sort.by(Sort.Direction.DESC, "Id"));
+        model.addAttribute("users", users);
+        return "users/Users_index";
     }
 
     @GetMapping("/create")
     public String createClient(Model model) {
-        ClientDto clientDto = new ClientDto();
-        model.addAttribute("clientDto", clientDto);
-        return "clients/Clients_create";
+        UserDto userDto = new UserDto();
+        model.addAttribute("UserDto", userDto);
+        return "users/Users_create";
     }
     @PostMapping("/create")
-    public String createClient(@Valid @ModelAttribute ClientDto clientDto, BindingResult result) {
-        if (clientRepo.findByEmail(clientDto.getEmail()) != null) {
-            result.addError(new FieldError("clientDto", "email", clientDto.getEmail(),
+    public String createClient(@Valid @ModelAttribute UserDto userDto, BindingResult result) {
+        if (userRepo.findByEmail(userDto.getEmail()) != null) {
+            result.addError(new FieldError("UserDto", "email", userDto.getEmail(),
              false, null, null, "Email already exists"));
         }
         if(result.hasErrors()) {
-            return "clients/Clients_create";
+            return "users/Users_create";
         }
-        Clients client = new Clients();
-        client.setFirstName(clientDto.getFirstName());
-        client.setLastName(clientDto.getLastName());
-        client.setEmail(clientDto.getEmail());
-        client.setPassword(clientDto.getPassword());
-        client.setPhone(clientDto.getPhone());
-        client.setAddress(clientDto.getAddress());
-        client.setStatus(clientDto.getStatus());
+        UsersTable user = new UsersTable();
+        user.setFirstName(userDto.getFirstName());
+        user.setLastName(userDto.getLastName());
+        user.setEmail(userDto.getEmail());
+        user.setPassword(userDto.getPassword());
+        user.setPhone(userDto.getPhone());
+        user.setAddress(userDto.getAddress());
+        user.setStatus(userDto.getStatus());
         //new Date() is used by java.util.Date and new java.sql.Date() is used by java.sql.Date
-        client.setCreatedAt(new Date());//their are diffrent types of data imports, java.util.Date is used here. the other one is java.sql.Date
+        user.setCreatedAt(new Date());//their are diffrent types of data imports, java.util.Date is used here. the other one is java.sql.Date
 
 
-        clientRepo.save(client);
-        return "redirect:/clients";
+        userRepo.save(user);
+        return "redirect:/users";
     }
     
     //@GetMapping("/edit")  
     @GetMapping("/edit/{id}")
     public String editClient(Model model, @PathVariable int id /*@RequestParam int id*/) {
-        Clients clients = clientRepo.findById(id).orElse(null);//Varible name mattters here, it should be the same as the one in the repository
+        UsersTable user = userRepo.findById(id).orElse(null);//Varible name mattters here, it should be the same as the one in the repository
         // for .orElse(null) to work, the return type of findById should be Optional, meaning that method findById should not exist in the repository
-        if(clients == null) {
-            return "redirect:/clients";
+        if(user == null) {
+            return "redirect:/users";
         }
 
-        ClientDto clientDto = new ClientDto();
-        clientDto.setFirstName(clients.getFirstName());
-        clientDto.setLastName(clients.getLastName());
-        clientDto.setEmail(clients.getEmail());
-        clientDto.setPassword(clients.getPassword());
-        clientDto.setPhone(clients.getPhone());
-        clientDto.setAddress(clients.getAddress());
-        clientDto.setStatus(clients.getStatus());
+        UserDto userDto = new UserDto();
+        userDto.setFirstName(user.getFirstName());
+        userDto.setLastName(user.getLastName());
+        userDto.setEmail(user.getEmail());
+        userDto.setPassword(user.getPassword());
+        userDto.setPhone(user.getPhone());
+        userDto.setAddress(user.getAddress());
+        userDto.setStatus(user.getStatus());
 
-        model.addAttribute("clients", clients);//attribute name should be the same as the one in the html file
-        model.addAttribute("clientDto", clientDto);
+        model.addAttribute("user", user);//attribute name should be the same as the one in the html file
+        model.addAttribute("userDto", userDto);
 
-        return "clients/Clients_edit";
+        return "users/Users_edit";
     }
 
 
     @PostMapping("/edit/{id}")
     public String editClient(Model model, /*@RequestParam int id*/ @PathVariable int id, 
-    @Valid @ModelAttribute ClientDto clientDto, 
-    BindingResult result) {
-        Clients clients = clientRepo.findById(id) .orElse(null);
-        if(clients == null) {
-            return "redirect:/clients";
+    @Valid @ModelAttribute UserDto userDto, BindingResult result) {
+        UsersTable user = userRepo.findById(id) .orElse(null);
+        if(user == null) {
+            return "redirect:/users";
         }
-        model.addAttribute("clients", clients);
+
+        model.addAttribute("user", user);
         
         if(result.hasErrors()) {
-            return "clients/Clients_edit";
+            return "users/Users_edit";
         }
-        clients.setFirstName(clientDto.getFirstName());
-        clients.setLastName(clientDto.getLastName());
-        clients.setEmail(clientDto.getEmail());
-        clients.setPassword(clientDto.getPassword());
-        clients.setPhone(clientDto.getPhone());
-        clients.setAddress(clientDto.getAddress());
-        clients.setStatus(clientDto.getStatus());
+
+        user.setFirstName(userDto.getFirstName());//
+        user.setLastName(userDto.getLastName());//
+        user.setEmail(userDto.getEmail());//
+        user.setPassword(userDto.getPassword());//
+        user.setPhone(userDto.getPhone());//
+        user.setAddress(userDto.getAddress());//
+        user.setStatus(userDto.getStatus());//
+
+
         try {
-            clientRepo.save(clients);
+            userRepo.save(user);
 
         } catch (Exception e) {
-            result.addError(new FieldError("ClientDto", "email", clientDto.getEmail(),
+            result.addError(new FieldError("userDto", "email", userDto.getEmail(),
              false, null, null, "Email already exists"));
 
-            return "clients/Clients_edit";
+            return "users/Users_edit";
         }
 
-        return "redirect:/clients";
+        return "redirect:/users";
     }
 
     @GetMapping("/delete/{id}")
     public String deleteClient(@PathVariable int id) {
-        Clients clients = clientRepo.findById(id).orElse(null);
-        if(clients != null) {
-            clientRepo.delete(clients);
+        UsersTable User = userRepo.findById(id).orElse(null);
+        if(User != null) {
+            userRepo.delete(User);
         }
-        return "redirect:/clients";
+        return "redirect:/users";
     }
 
 
